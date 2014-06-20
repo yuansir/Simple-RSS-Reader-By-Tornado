@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>RSS Reader</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="RSS Reader">
+    <meta name="author" content="Ryan">
+    <!-- Bootstrap -->
+    <link href="{{ static_url('css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ static_url('css/bootstrap-responsive.min.css') }}" rel="stylesheet" media="screen">
+    <link href="{{ static_url('css/style.css') }}" rel="stylesheet" media="screen">
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="{{ static_url('js/bootstrap.min.js') }}"></script>
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+
+        .sidebar-nav {
+            padding: 9px 0;
+        }
+
+        @media (max-width: 980px) {
+            /* Enable use of floated navbar text */
+            .navbar-text.pull-right {
+                float: none;
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="/">RSS Reader</a>
+
+            <div class="nav-collapse collapse">
+                <p class="navbar-text pull-right">
+                    <button class="btn btn-primary " id="show-edit-btn" type="button">Show Edit</button>
+                    <!--<a href="javascript:;" class="navbar-link">Edit</a>-->
+                </p>
+                <ul class="nav">
+                    <li class="active"><a href="/">Home</a></li>
+                    <li><a href="#" data-toggle="modal" class="category" data-url="/category-add">Category</a>
+                    </li>
+                    <li><a href="#" data-toggle="modal" class="rss" data-url="/rss-add">RSS</a></li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        {% module Menu() %}
+        <!--/span-->
+
+        {% block content %}{% end %}
+
+        <!--/row-->
+    </div>
+    <!--/span-->
+</div>
+<!--/row-->
+<hr>
+
+<footer>
+    <p>&copy; Company 2013</p>
+</footer>
+
+</div>
+<!--/.fluid-container-->
+<link href="{{ static_url('css/bootstrap-modal.css') }}" rel="stylesheet" media="screen">
+<script src="{{ static_url('js/bootstrap-modalmanager.js') }}"></script>
+<script src="{{ static_url('js/bootstrap-modal.js') }}"></script>
+<script type="text/javascript" src="{{ static_url('js/bootbox.js') }}"></script>
+<script src="{{ static_url('js/common.js') }}"></script>
+<div id="ajax-modal" class="modal hide fade" tabindex="-1"></div>
+<script id="ajax" type="text/javascript">
+
+    var $modal = $('#ajax-modal');
+
+    $('.category,.rss').on('click', function () {
+        // create the backdrop and wait for next modal to be triggered
+        $('body').modalmanager('loading');
+        var load_url = $(this).attr("data-url");
+        setTimeout(function () {
+            $modal.load(load_url, '', function () {
+                $modal.modal();
+            });
+        }, 1000);
+    });
+
+    $("#show-edit-btn").click(function(){
+        var txt = $(this).text()
+        if(txt == 'Show Edit'){
+            $(".btn-hide").show()
+            $(this).text("Close Edit")
+        }else{
+            $(".btn-hide").hide()
+            $(this).text("Show Edit")
+        }
+    })
+</script>
+</body>
+</html>

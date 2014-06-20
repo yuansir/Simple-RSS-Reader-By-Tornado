@@ -1,0 +1,44 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>添加分类</h3>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal add-category-form">
+        <div class="control-group">
+            <label class="control-label" for="category">名称</label>
+
+            <div class="controls">
+                <input type="text" name="category" id="category" placeholder="分类名称">
+                {% raw xsrf_form_html() %}
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" class="btn-primary  add">添加</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn">Close</button>
+</div>
+<script type="text/javascript">
+    $("form.add-category-form .add").click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: "category-add",
+            type: "POST",
+            data: { category: $("input[name=category]").val(), _xsrf: getCookie('_xsrf') }
+        }).done(function (data) {
+            var callback = new Function();
+            if (data.status) {
+                callback = function () {
+                    window.location.reload();
+                }
+            }
+            bootbox.alert(data.msg,callback);
+
+        });
+    })
+</script>

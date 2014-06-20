@@ -1,0 +1,14 @@
+.sidebar-nav li a{
+    display: inline-table;
+}
+.nav-header {
+    font-size: 18px;
+}
+
+.btn-hide{
+    display: none;
+}
+
+.pull-right{
+    line-height: 0;
+}

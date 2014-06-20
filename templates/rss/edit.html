@@ -1,0 +1,59 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>编辑RSS</h3>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal edit-rss-form">
+        <div class="control-group">
+            <label class="control-label" for="category">分类</label>
+
+            <div class="controls">
+                {% if category %}
+                    <select name="category">
+                    {% for item in category %}
+                    <option value="{{ item }}" {% if item == rss['category'] %} selected="selected" {% end %}>{{ item }}</option>
+                    {% end %}
+                    <option value="Other" {% if 'Other' == rss['category'] %} selected="selected" {% end %} >Other</option>
+                    </select>
+                {% end %}
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="link">URL</label>
+
+            <div class="controls">
+                <input type="text" name="link" id="link" placeholder="http://" value="{{ rss['feed_link'] }}">
+                {% raw xsrf_form_html() %}
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" class="btn-primary  save">保存</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn">Close</button>
+</div>
+<script type="text/javascript">
+    $("form.edit-rss-form .save").click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: 'rss-edit/{{ rss['_id'] }}',
+            type: "POST",
+            data: $("form.edit-rss-form").serialize()
+        }).done(function (data) {
+            var callback = new Function();
+            if (data.status) {
+                callback = function () {
+                    window.location.reload();
+                }
+            }
+            bootbox.alert(data.msg, callback);
+
+        });
+    })
+</script>

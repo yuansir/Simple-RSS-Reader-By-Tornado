@@ -1,0 +1,106 @@
+<div class="span3">
+    <div class="well sidebar-nav">
+        <ul class="nav nav-list">
+            {% for category in list %}
+            <li class="nav-header">
+                {{ category }}
+                {% if category != 'Other' %}
+                <button class="btn btn-mini btn-hide edit-btn" type="button"
+                        data-name="{{ category }}" data-url="category-edit/{{ category }}">
+                    <i class="icon-edit"></i>
+                </button>
+                <button class="btn btn-mini btn-hide delete-btn" type="button"
+                        data-name="{{ category }}" data-url="category-delete">
+                    <i class="icon-remove"></i>
+                </button>
+                {% end %}
+            </li>
+            <!--<li class="active"><a href="#">Link</a></li>-->
+            {% for rss in list[category] %}
+            <li>
+                <a href="javascript:;" data-url="{{ rss['feed_link'] }}">{{ rss['title'] }}</a>
+                <button class="btn btn-mini btn-hide edit-btn" type="button"
+                        data-name="{{ rss['_id'] }}" data-url="rss-edit/{{ rss['_id'] }}">
+                    <i class="icon-edit"></i>
+                </button>
+                <button class="btn btn-mini btn-hide delete-btn" type="button"
+                        data-name="{{ rss['_id'] }}" data-url="rss-delete">
+                    <i class="icon-remove"></i>
+                </button>
+            </li>
+            {% end %}
+            {% end %}
+        </ul>
+    </div>
+    <!--/.well -->
+</div>
+<script type="text/javascript">
+    $(".nav-list a").each(function (e) {
+        var feed_link = $(this).attr("data-url");
+        $(this).click(function () {
+            $('body').modalmanager('loading');
+            var _li = $(this).parent('li')
+            _li.addClass("active")
+            _li.siblings().removeClass("active")
+            $.ajax({
+                url: "rss-list",
+                type: "GET",
+                data: { feed_link: feed_link}
+            }).done(function (data) {
+                $('body').modalmanager('removeLoading')
+                if (data.status == 0) {
+                    bootbox.alert(data.msg);
+                    return false;
+                }
+                var post_html = '';
+                $.each(data.data[0], function (index, val) {
+                    var d = new Date(val.published)
+                    post_html += '<div class="row-fluid">'
+                            + '<div class="span12 ">'
+                            + ' <h3>' + val.title + '</h3>'
+                            + '<span class="label label-success">' + d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDay() + '日  ' + d.getHours() + '</span>'
+                            + '<p>' + val.summary + '</p>'
+                            + '<p><a class="btn" href="' + val.link + '" target="blank">View details &raquo;</a></p>'
+                            + '</div>'
+                            + '</div>';
+                })
+                $(".rss-list-row").html('').append($(post_html))
+            });
+        })
+    })
+
+    $(".delete-btn").click(function () {
+        var data_name = $(this).attr("data-name")
+        var url = $(this).attr('data-url')
+        bootbox.confirm("确定删除?", function (result) {
+            if (!result) {
+                return false;
+            }
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: { data_name: data_name, _xsrf: getCookie('_xsrf')},
+                success: function (data) {
+                    if (data.status == 0) {
+                        bootbox.alert(data.msg);
+                        return false;
+                    }
+                    bootbox.alert('删除成功', function () {
+                        window.location.reload();
+                    });
+                }
+            })
+        });
+    })
+
+    $(".edit-btn").click(function () {
+        var data_name = $(this).attr("data-name")
+        var load_url = $(this).attr("data-url");
+        $('body').modalmanager('loading');
+        setTimeout(function () {
+            $modal.load(load_url, '', function () {
+                $modal.modal();
+            });
+        }, 1000);
+    })
+</script>
