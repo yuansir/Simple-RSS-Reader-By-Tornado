@@ -1,4 +1,2 @@
-Simple-RSS-Reader-By-Tornado
-============================
-
-A simple RSS Reader Demo created by Tornado
+# Simple RSS Reader Demo
+Just for learning tornado framework
